@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request Fitur</title>
+  <style>
+    /* ====== BACKGROUND GRADIENT WARNA WARNI ====== */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(270deg, #ff00cc, #ff6600, #33ff00, #00ccff, #9900ff);
+      background-size: 1000% 1000%;
+      animation: gradientMove 15s ease infinite;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* ====== CARD CONTAINER ====== */
+    .container {
+      position: relative;
+      background: rgba(10, 0, 30, 0.7);
+      border: 2px solid #ff00cc;
+      box-shadow: 0 0 25px #ff00cc, 0 0 60px rgba(255, 0, 204, 0.4);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      animation: fadeIn 1s ease-out;
+      backdrop-filter: blur(8px);
+      z-index: 1;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #ff80e0;
+      text-shadow: 0 0 10px #ff33cc;
+      letter-spacing: 1px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ff66e5;
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    input[type="text"]:focus {
+      box-shadow: 0 0 20px #ff00cc;
+      background: rgba(255,255,255,0.25);
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      background: linear-gradient(90deg, #ff00cc, #ff66e5, #ff00cc);
+      border: none;
+      color: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 8px #ff66e5;
+      box-shadow: 0 0 20px #ff00cc;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 35px #ff33cc;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    li {
+      background: rgba(255, 0, 204, 0.2);
+      border-left: 3px solid #ff00cc;
+      margin-bottom: 8px;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-shadow: 0 0 5px #ff00cc;
+      animation: fadeUp 0.5s ease-out;
+    }
+
+    /* ====== ANIMASI ====== */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ====== AUDIO (TAK TERLIHAT) ====== */
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🌈 Request Fitur 🌈</h2>
+    <input type="text" id="fiturInput" placeholder="Ketik request kamu...">
+    <button onclick="tambahRequest()">Tambah Request</button>
+
+    <ul id="daftarFitur"></ul>
+  </div>
+
+  <!-- Musik otomatis tanpa kontrol -->
+  <audio id="bgMusic" autoplay loop>
+    <source src="https://raw.githubusercontent.com/zionjs0/whatsapp-media/main/file_1762679416384.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const fiturInput = document.getElementById("fiturInput");
+    const daftarFitur = document.getElementById("daftarFitur");
+
+    // Load data dari localStorage
+    function loadRequests() {
+      const data = JSON.parse(localStorage.getItem("requests")) || [];
+      daftarFitur.innerHTML = "";
+      data.forEach(text => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        daftarFitur.appendChild(li);
+      });
+    }
+
+    function tambahRequest() {
+      const teks = fiturInput.value.trim();
+      if (teks === "") {
+        alert("Isi dulu request fiturnya!");
+        return;
+      }
+
+      const li = document.createElement("li");
+      li.textContent = teks;
+      daftarFitur.appendChild(li);
+
+      const data = JSON.parse(localStorage.getItem("requests")) || [];
+      data.push(teks);
+      localStorage.setItem("requests", JSON.stringify(data));
+
+      fiturInput.value = "";
+    }
+
+    loadRequests();
+
+    // Aktifkan musik otomatis setelah interaksi pertama (batas browser)
+    document.addEventListener("click", () => {
+      const music = document.getElementById("bgMusic");
+      if (music.paused) music.play();
+    });
+  </script>
+</body>
+</html>
