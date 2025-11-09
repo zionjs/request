@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Request Fitur</title>
   <style>
-    /* ====== BACKGROUND GRADIENT WARNA WARNI ====== */
     body {
       margin: 0;
       padding: 0;
@@ -27,7 +26,6 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* ====== CARD CONTAINER ====== */
     .container {
       position: relative;
       background: rgba(10, 0, 30, 0.7);
@@ -38,9 +36,7 @@
       width: 90%;
       max-width: 400px;
       text-align: center;
-      animation: fadeIn 1s ease-out;
       backdrop-filter: blur(8px);
-      z-index: 1;
     }
 
     h2 {
@@ -48,10 +44,9 @@
       margin-bottom: 20px;
       color: #ff80e0;
       text-shadow: 0 0 10px #ff33cc;
-      letter-spacing: 1px;
     }
 
-    input[type="text"] {
+    input {
       width: 100%;
       padding: 12px;
       border-radius: 10px;
@@ -59,12 +54,12 @@
       background: rgba(255,255,255,0.1);
       color: #fff;
       font-size: 14px;
-      outline: none;
       text-align: center;
+      outline: none;
       transition: 0.3s;
     }
 
-    input[type="text"]:focus {
+    input:focus {
       box-shadow: 0 0 20px #ff00cc;
       background: rgba(255,255,255,0.25);
     }
@@ -106,24 +101,9 @@
       border-radius: 8px;
       font-size: 14px;
       text-shadow: 0 0 5px #ff00cc;
-      animation: fadeUp 0.5s ease-out;
     }
 
-    /* ====== ANIMASI ====== */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ====== AUDIO (TAK TERLIHAT) ====== */
-    audio {
-      display: none;
-    }
+    audio { display: none; }
   </style>
 </head>
 <body>
@@ -135,7 +115,6 @@
     <ul id="daftarFitur"></ul>
   </div>
 
-  <!-- Musik otomatis tanpa kontrol -->
   <audio id="bgMusic" autoplay loop>
     <source src="https://raw.githubusercontent.com/zionjs0/whatsapp-media/main/file_1762679416384.mp3" type="audio/mpeg">
   </audio>
@@ -144,9 +123,9 @@
     const fiturInput = document.getElementById("fiturInput");
     const daftarFitur = document.getElementById("daftarFitur");
 
-    // Load data dari localStorage
-    function loadRequests() {
-      const data = JSON.parse(localStorage.getItem("requests")) || [];
+    async function loadRequests() {
+      const res = await fetch("/data");
+      const data = await res.json();
       daftarFitur.innerHTML = "";
       data.forEach(text => {
         const li = document.createElement("li");
@@ -155,31 +134,29 @@
       });
     }
 
-    function tambahRequest() {
+    async function tambahRequest() {
       const teks = fiturInput.value.trim();
       if (teks === "") {
         alert("Isi dulu request fiturnya!");
         return;
       }
 
-      const li = document.createElement("li");
-      li.textContent = teks;
-      daftarFitur.appendChild(li);
-
-      const data = JSON.parse(localStorage.getItem("requests")) || [];
-      data.push(teks);
-      localStorage.setItem("requests", JSON.stringify(data));
+      await fetch("/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ request: teks })
+      });
 
       fiturInput.value = "";
+      loadRequests();
     }
 
-    loadRequests();
-
-    // Aktifkan musik otomatis setelah interaksi pertama (batas browser)
     document.addEventListener("click", () => {
       const music = document.getElementById("bgMusic");
       if (music.paused) music.play();
     });
+
+    loadRequests();
   </script>
 </body>
 </html>
